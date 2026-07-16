@@ -18,7 +18,7 @@ import requests
 
 # Ler DATABASE_URL da env var (GitHub Actions injeta automaticamente)
 # Ler DATABASE_URL da env var (GitHub Actions injeta automaticamente)
-DSN = os.environ.get("DB")
+DSN = os.environ.get("DATABASE_URL")
 
 if not DSN:
     raise RuntimeError(

@@ -1,6 +1,6 @@
 """
 Pipeline de coleta — Comparador de Preços
-Crawl por categoria (árvore VTEX) + persistência PostgreSQL.
+Crawl por categoria (árvore VTEX) + persistência PostgreSQL.ee
 
 Uso:
     python3 pipeline.py                        # coleta tudo

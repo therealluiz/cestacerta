@@ -17,7 +17,18 @@ import psycopg2.extras
 import requests
 
 # Ler DATABASE_URL da env var (GitHub Actions injeta automaticamente)
-DSN = os.environ.get("DATABASE_URL", "host=localhost dbname=comparador user=app password=app")
+# Ler DATABASE_URL da env var (GitHub Actions injeta automaticamente)
+DSN = os.environ.get("DATABASE_URL")
+
+if not DSN:
+    raise RuntimeError(
+        "DATABASE_URL não configurada. "
+        "Verifique os Secrets do GitHub Actions."
+    )
+
+# Compatibilidade com provedores que usam postgres://
+if DSN.startswith("postgres://"):
+    DSN = DSN.replace("postgres://", "postgresql://", 1)
 HEADERS = {"User-Agent": "Mozilla/5.0 (comparador-poc)"}
 PAGE_SIZE = 50
 DELAY = 0.4
@@ -152,7 +163,10 @@ def upsert_listing_and_price(cur, store_id, product_id, sku, raw_name,
 # ---------------------------------------------------------------- orquestração
 
 def run(limit_categories: int | None = None):
-    conn = psycopg2.connect(DSN)
+    conn = psycopg2.connect(
+        DSN,
+        sslmode="require"
+    )
     conn.autocommit = False
     collected_at = datetime.now(timezone.utc)
 

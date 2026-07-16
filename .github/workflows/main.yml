@@ -1,18 +1,32 @@
 name: Coleta diária de preços
+
 on:
   schedule:
-    - cron: "0 6 * * *"   # 03:00 BRT
-  workflow_dispatch:        # permite rodar manualmente
+    - cron: "0 6 * * *"
+  workflow_dispatch:
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Mostrar arquivos
+        run: |
+          pwd
+          ls -la
+          echo "------"
+          find . -type f
+
       - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
-      - run: pip install requests psycopg2-binary
+        with:
+          python-version: "3.12"
+
+      - run: |
+          python -m pip install --upgrade pip
+          pip install requests psycopg2-binary
+
       - run: python scraper/pipeline.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
